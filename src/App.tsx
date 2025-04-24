@@ -5,6 +5,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { ProtectedRoute } from "@/components/protected-route";
 import { useAuthStore } from "@/stores/auth-store";
 import { useEffect } from "react";
+import { Loading } from "./pages/loading";
+import { Home } from "lucide-react";
 
 function App() {
   const { isLoggedIn, loading } = useAuthStore();
@@ -16,7 +18,7 @@ function App() {
   if (loading) {
     return (
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <div>Loading...</div>
+        <Loading />
       </ThemeProvider>
     );
   }
@@ -27,7 +29,7 @@ function App() {
         <Routes>
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<>Home</>}></Route>
+            <Route path="/" element={<Home />}></Route>
           </Route>
 
           {/* Public Routes */}
