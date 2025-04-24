@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useAuthStore } from "@/stores/auth-store";
 // import { verifyAPIKey } from "@/lib/auth";
 // import { useState } from "react";
 // import { Loader2 } from "lucide-react";
@@ -44,6 +45,8 @@ const registrationFormSchema = z.object({
 
 export const Login = () => {
   // const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuthStore();
+
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -85,10 +88,10 @@ export const Login = () => {
   //   }
   // }
 
-  function onSubmit(values: z.infer<typeof loginFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+    // setIsLoading(true);
+    await login(values.username, values.password);
+    // setIsLoading(false);
   }
 
   return (
