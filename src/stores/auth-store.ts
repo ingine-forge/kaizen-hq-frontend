@@ -9,6 +9,12 @@ interface AuthState {
   loading: boolean; // Add loading state
   checkAuth: () => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
+  register: (
+    username: string,
+    password: string,
+    torn_id: number,
+    api_key: string
+  ) => Promise<void>;
   logout: () => void;
 }
 
@@ -46,6 +52,20 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error) {
       console.error("Login error", error);
       set({ isLoggedIn: false });
+    }
+  },
+
+  // Login action
+  register: async (
+    username: string,
+    password: string,
+    torn_id: number,
+    api_key: string
+  ) => {
+    try {
+      await AuthService.register(username, password, torn_id, api_key);
+    } catch (error) {
+      console.error("Login error", error);
     }
   },
 

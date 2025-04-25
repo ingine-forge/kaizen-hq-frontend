@@ -38,14 +38,14 @@ const registrationFormSchema = z.object({
     .nonempty("API Key cannot be empty")
     .min(16, "API key must be 16 characters long.")
     .max(16, "API key must be 16 characters long."),
-  tornID: z
-    .number({ message: "Torn ID must be numbers" })
-    .nonnegative("Can only be positive number"),
+  tornID: z.coerce
+    .number({ message: "Torn ID must be a number" })
+    .nonnegative({ message: "Can only be positive number" }),
 });
 
 export const Login = () => {
   // const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuthStore();
+  const { login, register } = useAuthStore();
 
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -65,32 +65,22 @@ export const Login = () => {
     },
   });
 
-  // const { updateApiKey } = useAPIKeyStore();
-  // const { setAuthentication } = useAuthStore();
-
-  // async function onSubmit(values: z.infer<typeof formSchema>) {
-  //   setIsLoading(true);
-  //   try {
-  //     const isApiKeyValid = await verifyAPIKey(values.apiKey);
-  //     if (isApiKeyValid) {
-  //       updateApiKey(values.apiKey);
-  //       setAuthentication(true);
-  //     } else if (isApiKeyValid === false) {
-  //       form.setError("apiKey", { message: "Incorrect API Key" });
-  //     }
-  //     setIsLoading(false);
-  //   } catch (e) {
-  //     console.log(e);
-  //     form.setError("apiKey", {
-  //       message: "Something went wrong, please try again later.",
-  //     });
-  //     setIsLoading(false);
-  //   }
-  // }
-
-  async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+  async function onLoginSubmit(values: z.infer<typeof loginFormSchema>) {
     // setIsLoading(true);
     await login(values.username, values.password);
+    // setIsLoading(false);
+  }
+
+  async function onRegistrationSubmit(
+    values: z.infer<typeof registrationFormSchema>
+  ) {
+    // setIsLoading(true);
+    await register(
+      values.username,
+      values.password,
+      values.tornID,
+      values.apiKey
+    );
     // setIsLoading(false);
   }
 
@@ -120,7 +110,7 @@ export const Login = () => {
               <CardContent className="space-y-2">
                 <Form {...loginForm}>
                   <form
-                    onSubmit={loginForm.handleSubmit(onSubmit)}
+                    onSubmit={loginForm.handleSubmit(onLoginSubmit)}
                     className="space-y-2"
                   >
                     <FormField
@@ -168,7 +158,9 @@ export const Login = () => {
               <CardContent className="space-y-2">
                 <Form {...registrationForm}>
                   <form
-                    onSubmit={registrationForm.handleSubmit(onSubmit)}
+                    onSubmit={registrationForm.handleSubmit(
+                      onRegistrationSubmit
+                    )}
                     className="space-y-2"
                   >
                     <FormField
@@ -228,7 +220,7 @@ export const Login = () => {
                           <FormControl>
                             <Input
                               {...field}
-                              type="number"
+                              // type="number"
                               autoComplete="off"
                             />
                           </FormControl>
